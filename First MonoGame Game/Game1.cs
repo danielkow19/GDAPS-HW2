@@ -16,9 +16,30 @@ namespace First_MonoGame_Game
     /// </summary>
     public class Game1 : Game
     {
+        // Pre-generated fields
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        // Texture/Drawing Fields
+        private Texture2D playerTexture;
+        private Texture2D collectableTexture;
+        //private SpriteFont INSERT TITLE/GAMEOVER FONT NAME HERE
+        //private SpriteFont INSERT SMALLER FONT NAME HERE
+
+        // GameObject fields
+        private Player player;
+        private List<Collectable> collectables;
+
+        // Game-logic fields
+        private States state;
+        private int level;
+        private double timer;
+
+        // Input fields
+        private KeyboardState kbState;
+        private KeyboardState previousKbState;
+
+        // Constructor
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
