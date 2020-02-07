@@ -39,6 +39,10 @@ namespace First_MonoGame_Game
         private KeyboardState kbState;
         private KeyboardState previousKbState;
 
+        // Window fields
+        private int windowWidth;
+        private int windowHeight;
+
         // Constructor
         public Game1()
         {
@@ -54,7 +58,11 @@ namespace First_MonoGame_Game
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
+            state = States.Menu;
+            level = 0; // Calling NextLevel will increment this at the start, so it must start at 0
+            timer = 10;
+            windowWidth = GraphicsDevice.Viewport.Width;
+            windowHeight = GraphicsDevice.Viewport.Height;
 
             base.Initialize();
         }
@@ -106,6 +114,18 @@ namespace First_MonoGame_Game
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        private void NextLevel()
+        {
+            level++;
+            timer = 10;
+
+            player.LevelScore = 0;
+
+            // Centers the player on screen
+            player.X = windowWidth / 2 + player.Position.Width / 2;
+            player.Y = windowHeight / 2 + player.Position.Height / 2;
         }
     }
 }
