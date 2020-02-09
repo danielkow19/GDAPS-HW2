@@ -22,7 +22,9 @@ namespace First_MonoGame_Game
 
         // Texture/Drawing Fields
         private Texture2D playerTexture;
+        private float playerSizeScale;
         private Texture2D collectableTexture;
+        private float collectableSizeScale;
         //private SpriteFont INSERT TITLE/GAMEOVER FONT NAME HERE
         //private SpriteFont INSERT SMALLER FONT NAME HERE
 
@@ -34,6 +36,7 @@ namespace First_MonoGame_Game
         private States state;
         private int level;
         private double timer;
+        private Random rand;
 
         // Input fields
         private KeyboardState kbState;
@@ -61,6 +64,7 @@ namespace First_MonoGame_Game
             state = States.Menu;
             level = 0; // Calling NextLevel will increment this at the start, so it must start at 0
             timer = 10;
+            rand = new Random();
             windowWidth = GraphicsDevice.Viewport.Width;
             windowHeight = GraphicsDevice.Viewport.Height;
 
@@ -126,6 +130,23 @@ namespace First_MonoGame_Game
             // Centers the player on screen
             player.X = windowWidth / 2 + player.Position.Width / 2;
             player.Y = windowHeight / 2 + player.Position.Height / 2;
+
+            collectables.Clear();
+
+            // Start with 5 collectables, increase by 3 every level
+            int numPickups = 2 + 3 * level;
+
+            for (int i = 0; i < numPickups; i++)
+            {
+                // Randomize the item's position such that it's always in view of the screen
+                int x = rand.Next(windowWidth - (int)(collectableTexture.Width * collectableSizeScale));
+                int y = rand.Next(windowHeight - (int)(collectableTexture.Height * collectableSizeScale));
+
+                // Create the collectable object and add it to the list
+                collectables.Add(new Collectable(collectableTexture, x, y,
+                    (int)(collectableTexture.Width * collectableSizeScale),
+                    (int)(collectableTexture.Height * collectableSizeScale)));
+            }
         }
     }
 }
