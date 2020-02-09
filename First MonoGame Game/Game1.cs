@@ -120,6 +120,9 @@ namespace First_MonoGame_Game
             base.Draw(gameTime);
         }
 
+        /// <summary>
+        /// Sets up a new level, centering the player and randomizing collectables
+        /// </summary>
         private void NextLevel()
         {
             level++;
@@ -147,6 +150,64 @@ namespace First_MonoGame_Game
                     (int)(collectableTexture.Width * collectableSizeScale),
                     (int)(collectableTexture.Height * collectableSizeScale)));
             }
+        }
+
+        /// <summary>
+        /// Resets the game and makes level 1
+        /// </summary>
+        private void ResetGame()
+        {
+            level = 0;
+            player.TotalScore = 0;
+            NextLevel();
+        }
+
+        /// <summary>
+        /// Moves an object to the oposite edge of a screen if over half of its hitbox is over the edge
+        /// </summary>
+        /// <param name="objToWrap">The object to wrap around the screen</param>
+        private void ScreenWrap(GameObject objToWrap)
+        {
+            // Horizontal wrapping
+            if (player.X > windowWidth - player.Position.Width / 2)
+            {
+                player.X = 0 - player.Position.Width / 2;
+            }
+            else if (player.X < 0 - player.Position.Width / 2)
+            {
+                player.X = windowWidth - player.Position.Width / 2;
+            }
+
+            // Vertical wrapping
+            if (player.Y > windowHeight - player.Position.Height / 2)
+            {
+                player.Y = 0 - player.Position.Height / 2;
+            }
+            else if (player.Y < 0 - player.Position.Height / 2)
+            {
+                player.Y = windowHeight - player.Position.Height / 2;
+            }
+        }
+
+        /// <summary>
+        /// Checks if this is the first frame a key has been pressed
+        /// </summary>
+        /// <param name="key">The key to check</param>
+        private bool SingleKeyPress (Keys key)
+        {
+            // Was it up last frame AND is it down this frame
+            return previousKbState.IsKeyUp(key) && kbState.IsKeyDown(key);
+        }
+
+        /// <summary>
+        /// Moves the player according to the key(s) pressed
+        /// </summary>
+        private void MovePlayer()
+        {
+            if (kbState.IsKeyDown(Keys.W)) { player.Y -= 3; }
+            if (kbState.IsKeyDown(Keys.S)) { player.Y += 3; }
+            if (kbState.IsKeyDown(Keys.A)) { player.X -= 3; }
+            if (kbState.IsKeyDown(Keys.D)) { player.X += 3; }
         }
     }
 }
