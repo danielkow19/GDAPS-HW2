@@ -25,7 +25,7 @@ namespace First_MonoGame_Game
         private float playerSizeScale;
         private Texture2D collectableTexture;
         private float collectableSizeScale;
-        private SpriteFont arial72;
+        private SpriteFont arial36;
         private SpriteFont arial12;
 
         // GameObject fields
@@ -87,7 +87,7 @@ namespace First_MonoGame_Game
             // Load all the assets
             playerTexture = this.Content.Load<Texture2D>("spaceship");
             collectableTexture = this.Content.Load<Texture2D>("diamond");
-            arial72 = this.Content.Load<SpriteFont>("arial72");
+            arial36 = this.Content.Load<SpriteFont>("arial36");
             arial12 = this.Content.Load<SpriteFont>("arial12");
 
             // Adjusting this makes the player sprite/hitbox any needed size
@@ -97,7 +97,7 @@ namespace First_MonoGame_Game
                 (int)(playerTexture.Height * playerSizeScale));
 
             // Adjusting this makes the collectable sprite/hitbox any needed size
-            collectableSizeScale = 1;
+            collectableSizeScale = 1.5f;
             collectables = new List<Collectable>();
         }
 
@@ -164,8 +164,8 @@ namespace First_MonoGame_Game
                                 if (collectables[i].Y > player.Y) { collectables[i].Y -= 1; }
                             }
 
-                            // Effectively increases the amount the timer decreases by 50%
-                            timer -= gameTime.ElapsedGameTime.TotalSeconds / 2;
+                            // Effectively increases the amount the timer decreases by 25%
+                            timer -= gameTime.ElapsedGameTime.TotalSeconds / 4;
                         }
                     }
 
@@ -213,9 +213,54 @@ namespace First_MonoGame_Game
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
+            spriteBatch.Begin();
 
-            // TODO: Add your drawing code here
+            switch (state)
+            {
+                case States.Menu:
+                    GraphicsDevice.Clear(Color.Black);
+
+                    spriteBatch.DrawString(arial36, "SPACE AGE SCAVENGER",
+                        new Vector2(40, 40), Color.White);
+
+                    spriteBatch.DrawString(arial12, "WASD to move\nSpace to dash (costs points)\n" +
+                        "Left Shift to attract objects (costs time)\nEnter to start",
+                        new Vector2(40, 200), Color.White);
+
+                    break;
+                case States.Game:
+                    GraphicsDevice.Clear(Color.CornflowerBlue);
+
+                    // Draw all the collectables
+                    for (int i = 0; i < collectables.Count; i++)
+                    {
+                        collectables[i].Draw(spriteBatch);
+                    }
+
+                    player.Draw(spriteBatch);
+
+                    spriteBatch.DrawString(arial12, "Level " + level + "\n" +
+                        "Score: " + player.LevelScore + "\n" +
+                        "Time: " + String.Format("{0:0.00}", timer),
+                        new Vector2(10, 10), Color.Black);
+
+                    break;
+                case States.GameOver:
+                    GraphicsDevice.Clear(Color.Black);
+
+                    spriteBatch.DrawString(arial36, "GAME OVER",
+                        new Vector2(40, 40), Color.White);
+
+                    spriteBatch.DrawString(arial12, "Level reached: " + level + "\n" +
+                        "Final score: " + player.TotalScore + "\n" +
+                        "Press enter to return to menu",
+                        new Vector2(40, 200), Color.White);
+
+                    break;
+            }
+
+
+            spriteBatch.End();
 
             base.Draw(gameTime);
         }

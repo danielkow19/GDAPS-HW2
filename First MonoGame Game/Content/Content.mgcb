@@ -25,7 +25,7 @@
 /processor:FontDescriptionProcessor
 /processorParam:PremultiplyAlpha=True
 /processorParam:TextureFormat=Compressed
-/build:arial72.spritefont
+/build:arial72.spritefont;arial36.spritefont
 
 #begin diamond.png
 /importer:TextureImporter
