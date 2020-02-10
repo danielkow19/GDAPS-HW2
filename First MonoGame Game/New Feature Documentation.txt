@@ -1,0 +1,16 @@
+﻿Daniel Kowalski
+2/9/2020
+
+My additional feature is the inclusion of 2 special abilities. Both are available to the player at
+any time (as long as they're in the "game" state). Both come with advantages and drawbacks.
+
+The first ability doubles the player's movement speed (pressing space). However, this comes at the cost
+of points every frame that its used, so if a player relies on this too much, it'll be harder for them
+to get a higher score than someone who uses it less. However, as more collectables are added, using this
+becomes more of a necessity to stay alive, so it becomes a game of balancing benefit vs cost.
+
+The second ability slowly drags all the collectables on the screen towards them. Instead of costing points,
+this ability costs time instead. As long as the left shift key is held, all the objects will drift
+towards the player, but the timer will go down at 1.25x speed. This is yet another risk/reward ability
+that requires skill to use properly. When used right, it sets up for quick sweeps of several gems at once.
+When used poorly, it can and will just end your run right there.
