@@ -25,8 +25,8 @@ namespace First_MonoGame_Game
         private float playerSizeScale;
         private Texture2D collectableTexture;
         private float collectableSizeScale;
-        //private SpriteFont INSERT TITLE/GAMEOVER FONT NAME HERE
-        //private SpriteFont INSERT SMALLER FONT NAME HERE
+        private SpriteFont arial72;
+        private SpriteFont arial12;
 
         // GameObject fields
         private Player player;
@@ -80,7 +80,21 @@ namespace First_MonoGame_Game
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            // Load all the assets
+            playerTexture = this.Content.Load<Texture2D>("spaceship");
+            collectableTexture = this.Content.Load<Texture2D>("diamond");
+            arial72 = this.Content.Load<SpriteFont>("arial72");
+            arial12 = this.Content.Load<SpriteFont>("arial12");
+
+            // Adjusting this makes the player sprite/hitbox any needed size
+            playerSizeScale = 1;
+            player = new Player(playerTexture, 0, 0,
+                (int)(playerTexture.Width * playerSizeScale),
+                (int)(playerTexture.Height * playerSizeScale));
+
+            // Adjusting this makes the collectable sprite/hitbox any needed size
+            collectableSizeScale = 1;
+            collectables = new List<Collectable>();
         }
 
         /// <summary>
