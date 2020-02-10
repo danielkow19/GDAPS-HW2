@@ -37,6 +37,7 @@ namespace First_MonoGame_Game
         private int level;
         private double timer;
         private Random rand;
+        private int playerSpeed;
 
         // Input fields
         private KeyboardState kbState;
@@ -65,8 +66,11 @@ namespace First_MonoGame_Game
             level = 0; // Calling NextLevel will increment this at the start, so it must start at 0
             timer = 10;
             rand = new Random();
+            playerSpeed = 3;
             windowWidth = GraphicsDevice.Viewport.Width;
             windowHeight = GraphicsDevice.Viewport.Height;
+            kbState = new KeyboardState();
+            previousKbState = new KeyboardState();
 
             base.Initialize();
         }
@@ -116,7 +120,89 @@ namespace First_MonoGame_Game
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            // TODO: Add your update logic here
+            // Store last frame's keyboard state as well as the current frame's
+            previousKbState = kbState;
+            kbState = Keyboard.GetState();
+
+            // Updates based on the current gamestate
+            switch (state)
+            {
+                case States.Menu:
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        state = States.Game;
+                        ResetGame();
+                    }
+                    break;
+                case States.Game:
+                    // Lower the timer based on the time it took to process the previous frame
+                    timer -= gameTime.ElapsedGameTime.TotalSeconds;
+
+                    // Personal tweak: Speed boost that costs points
+                    if (kbState.IsKeyDown(Keys.Space))
+                    {
+                        playerSpeed = 6;
+                        player.TotalScore -= 1;
+                        player.LevelScore -= 1;
+                    }
+                    else
+                    {
+                        playerSpeed = 3;
+                    }
+
+                    // Personal tweak 2: Suction ability that costs time
+                    if (kbState.IsKeyDown(Keys.LeftShift))
+                    {
+                        for (int i = 0; i < collectables.Count; i++)
+                        {
+                            if (collectables[i].Active)
+                            {
+                                // If the collectable is active, move it towards the player
+                                if (collectables[i].X < player.X) { collectables[i].X += 1; }
+                                if (collectables[i].X > player.X) { collectables[i].X -= 1; }
+                                if (collectables[i].Y < player.Y) { collectables[i].Y += 1; }
+                                if (collectables[i].Y > player.Y) { collectables[i].Y -= 1; }
+                            }
+
+                            // Effectively increases the amount the timer decreases by 50%
+                            timer -= gameTime.ElapsedGameTime.TotalSeconds / 2;
+                        }
+                    }
+
+                    // Process movement
+                    MovePlayer();
+                    ScreenWrap(player);
+
+                    bool anyCollectables = false;
+
+                    for (int i = 0; i < collectables.Count; i++)
+                    {
+                        // Check to see if the player picked up anything
+                        if (collectables[i].CheckCollision(player))
+                        {
+                            collectables[i].Active = false;
+                            player.TotalScore += 500;
+                            player.LevelScore += 500;
+                        }
+                        
+                        // Checks if at least one pickup is stil active
+                        if (collectables[i].Active) { anyCollectables = true; }
+                    }
+
+                    // Checks if the player has run out of time
+                    if (timer <= 0) { state = States.GameOver; }
+
+                    // Checks if the player has beaten this level and is ready to go on to the next
+                    if (!anyCollectables) { NextLevel(); }
+
+                    break;
+                case States.GameOver:
+                    if (SingleKeyPress(Keys.Enter))
+                    {
+                        state = States.Menu;
+                    }
+                    break;
+            }
 
             base.Update(gameTime);
         }
@@ -218,10 +304,10 @@ namespace First_MonoGame_Game
         /// </summary>
         private void MovePlayer()
         {
-            if (kbState.IsKeyDown(Keys.W)) { player.Y -= 3; }
-            if (kbState.IsKeyDown(Keys.S)) { player.Y += 3; }
-            if (kbState.IsKeyDown(Keys.A)) { player.X -= 3; }
-            if (kbState.IsKeyDown(Keys.D)) { player.X += 3; }
+            if (kbState.IsKeyDown(Keys.W)) { player.Y -= playerSpeed; }
+            if (kbState.IsKeyDown(Keys.S)) { player.Y += playerSpeed; }
+            if (kbState.IsKeyDown(Keys.A)) { player.X -= playerSpeed; }
+            if (kbState.IsKeyDown(Keys.D)) { player.X += playerSpeed; }
         }
     }
 }
